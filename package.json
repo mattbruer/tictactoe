@@ -7,20 +7,65 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "typecheck": "tsc",
+    "format:check": "npx prettier --check \"**/*.{js,jsx,json,ts,tsx}\"",
+    "format": "npx prettier --write \"**/*.{js,jsx,json,ts,tsx}\"",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\""
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run typecheck && npm lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx": "eslint",
+    "**/*.{js,jsx,json,ts,tsx}": "pretter --write"
   },
   "dependencies": {
+    "@expo-google-fonts/delius-unicase": "^0.2.2",
+    "@expo-google-fonts/inter": "^0.2.2",
+    "@react-native-async-storage/async-storage": "~1.15.0",
+    "@react-native-community/netinfo": "7.1.3",
+    "@react-native-picker/picker": "2.2.1",
+    "@react-navigation/elements": "^1.3.1",
+    "@react-navigation/native": "^6.0.8",
+    "@react-navigation/native-stack": "^6.5.0",
+    "@react-navigation/stack": "^6.1.1",
+    "@twotalltotems/react-native-otp-input": "^1.3.11",
+    "aws-amplify": "^4.3.16",
+    "aws-amplify-react-native": "^6.0.3",
     "expo": "~44.0.0",
+    "expo-app-loading": "~1.3.0",
+    "expo-av": "~10.2.0",
+    "expo-font": "~10.0.4",
+    "expo-haptics": "~11.1.1",
+    "expo-linear-gradient": "~11.0.3",
     "expo-status-bar": "~1.2.0",
+    "graphql-tag": "^2.12.6",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
-    "react-native-web": "0.17.1"
+    "react-native-gesture-handler": "~2.1.0",
+    "react-native-modal": "^13.0.1",
+    "react-native-safe-area-context": "3.3.2",
+    "react-native-screens": "~3.10.1",
+    "react-native-web": "0.17.1",
+    "zen-observable": "^0.8.15"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@types/react": "~17.0.21",
-    "@types/react-native": "~0.64.12",
+    "@types/react-native": "^0.64.24",
+    "@types/zen-observable": "^0.8.3",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/parser": "^5.15.0",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-react": "^7.29.4",
+    "husky": "^4.3.8",
+    "lint-staged": "^12.3.5",
     "typescript": "~4.3.5"
   },
   "private": true
