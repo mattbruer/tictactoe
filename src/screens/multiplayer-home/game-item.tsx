@@ -3,8 +3,8 @@ import { TouchableOpacity, Animated } from "react-native";
 
 import { useAuth } from "@contexts/auth-context";
 import { Text } from "@components";
-import { onUpdateGameById, PlayerGameType } from "./multiplayer-home.graphql";
-import { colors } from "@utils";
+import {  PlayerGameType } from "./multiplayer-home.graphql";
+import { colors,onUpdateGameById } from "@utils";
 import styles from "./multiplayer-home.styles";
 import { API, graphqlOperation } from "aws-amplify";
 import Observable from "zen-observable";

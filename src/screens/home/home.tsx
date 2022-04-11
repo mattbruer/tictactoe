@@ -6,7 +6,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorParams } from "@config/navigator";
 import { GradientBackground, Button, Text } from "@components";
 import { useAuth } from "@contexts/auth-context";
-import { Auth } from "aws-amplify";
+import {signOut}from '@utils'
+
 
 type HomeProps = {
     navigation: NativeStackNavigationProp<StackNavigatorParams, "Home">;
@@ -47,9 +48,9 @@ export default function Home({ navigation }: HomeProps): ReactElement {
                         loading={signingOut}
                         onPress={async () => {
                             if (user) {
+                                setSigningOut(true);
                                 try {
-                                    setSigningOut(true);
-                                    await Auth.signOut();
+                                    await signOut()
                                 } catch (error) {
                                     Alert.alert(error as string);
                                 }

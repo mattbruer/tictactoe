@@ -33,6 +33,9 @@ export const onCreatePlayer = /* GraphQL */ `
       games {
         nextToken
       }
+      tokens {
+        nextToken
+      }
     }
   }
 `;
@@ -49,6 +52,9 @@ export const onUpdatePlayer = /* GraphQL */ `
       games {
         nextToken
       }
+      tokens {
+        nextToken
+      }
     }
   }
 `;
@@ -63,6 +69,9 @@ export const onDeletePlayer = /* GraphQL */ `
       createdAt
       updatedAt
       games {
+        nextToken
+      }
+      tokens {
         nextToken
       }
     }
@@ -215,6 +224,39 @@ export const onDeleteGame = /* GraphQL */ `
       players {
         nextToken
       }
+    }
+  }
+`;
+export const onCreateExpoToken = /* GraphQL */ `
+  subscription OnCreateExpoToken($playerUsername: String) {
+    onCreateExpoToken(playerUsername: $playerUsername) {
+      id
+      token
+      playerUsername
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateExpoToken = /* GraphQL */ `
+  subscription OnUpdateExpoToken($playerUsername: String) {
+    onUpdateExpoToken(playerUsername: $playerUsername) {
+      id
+      token
+      playerUsername
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteExpoToken = /* GraphQL */ `
+  subscription OnDeleteExpoToken($playerUsername: String) {
+    onDeleteExpoToken(playerUsername: $playerUsername) {
+      id
+      token
+      playerUsername
+      createdAt
+      updatedAt
     }
   }
 `;

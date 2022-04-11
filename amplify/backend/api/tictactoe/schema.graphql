@@ -7,6 +7,10 @@ type Mutation {
     playMove(game: ID!, index: Int!): GameData
         @function(name: "playMove-${env}")
         @aws_cognito_user_pools
+
+    addExpoToken(token: String!): ExpoToken
+        @function(name: "addExpoToken-${env}")
+        @aws_cognito_user_pools
 }
 
 type Subscription {
@@ -25,16 +29,13 @@ type GameData {
 
 type Player
     @model
+    
     @key(fields: ["username"])
     @auth(
         rules: [
             { allow: private, operations: [read] }
             { allow: owner, ownerField: "username", operations: [update] }
-            {
-                allow: private
-                provider: iam
-                operations: [read, create, update, delete]
-            }
+            { allow: private, provider: iam, operations: [read, create, update, delete] }
         ]
     ) {
     id: ID!
@@ -43,6 +44,7 @@ type Player
     name: String!
     email: AWSEmail!
     games: [PlayerGame] @connection(keyName: "byPlayer", fields: ["username"])
+    tokens: [ExpoToken] @connection(keyName: "byPlayer", fields: ["username"])
 }
 
 type PlayerGame
@@ -52,11 +54,7 @@ type PlayerGame
     @auth(
         rules: [
             { allow: owner, ownerField: "owners", operations: [read] }
-            {
-                allow: private
-                provider: iam
-                operations: [read, create, update, delete]
-            }
+            { allow: private, provider: iam, operations: [read, create, update, delete] }
         ]
     ) {
     id: ID!
@@ -73,11 +71,7 @@ type Game
     @auth(
         rules: [
             { allow: owner, ownerField: "owners", operations: [read] }
-            {
-                allow: private
-                provider: iam
-                operations: [read, create, update, delete]
-            }
+            { allow: private, provider: iam, operations: [read, create, update, delete] }
         ]
     ) {
     id: ID!
@@ -102,3 +96,19 @@ enum Symbol {
     x
     o
 }
+
+type ExpoToken
+    @model
+    @key(fields: ["token"])
+    @key(name: "byPlayer", fields: ["playerUsername"])
+    @auth(
+        rules: [
+            { allow: owner, ownerField: "playerUsername", operations: [read, delete] }
+            { allow: private, provider: iam, operations: [read, create, update, delete] }
+        ]
+    ) {
+    id: ID!
+    token: String!
+    playerUsername: String!
+}
+

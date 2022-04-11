@@ -15,6 +15,9 @@ export const getPlayer = /* GraphQL */ `
       games {
         nextToken
       }
+      tokens {
+        nextToken
+      }
     }
   }
 `;
@@ -79,6 +82,43 @@ export const listGames = /* GraphQL */ `
         turn
         state
         winner
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getExpoToken = /* GraphQL */ `
+  query GetExpoToken($token: String!) {
+    getExpoToken(token: $token) {
+      id
+      token
+      playerUsername
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listExpoTokens = /* GraphQL */ `
+  query ListExpoTokens(
+    $token: String
+    $filter: ModelExpoTokenFilterInput
+    $limit: Int
+    $nextToken: String
+    $sortDirection: ModelSortDirection
+  ) {
+    listExpoTokens(
+      token: $token
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
+      items {
+        id
+        token
+        playerUsername
         createdAt
         updatedAt
       }

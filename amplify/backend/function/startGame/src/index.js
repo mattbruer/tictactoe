@@ -7,9 +7,10 @@
 Amplify Params - DO NOT EDIT */
 const appsync = require("aws-appsync");
 const gql = require("graphql-tag");
+const { Expo } = require("expo-server-sdk");
 require("cross-fetch/polyfill");
 
-exports.handler = async (event) => {
+exports.handler = async event => {
     const graphqlClient = new appsync.AWSAppSyncClient({
         url: process.env.API_TICTACTOE_GRAPHQLAPIENDPOINTOUTPUT,
         region: process.env.REGION,
@@ -18,10 +19,10 @@ exports.handler = async (event) => {
             credentials: {
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-                sessionToken: process.env.AWS_SESSION_TOKEN,
-            },
+                sessionToken: process.env.AWS_SESSION_TOKEN
+            }
         },
-        disableOffline: true,
+        disableOffline: true
     });
 
     const initiator = event.identity.username;
@@ -32,6 +33,11 @@ exports.handler = async (event) => {
         query getPlayer($username: String!) {
             getPlayer(username: $username) {
                 id
+                tokens {
+                    items {
+                        token
+                    }
+                }
             }
         }
     `;
@@ -39,15 +45,15 @@ exports.handler = async (event) => {
     const initiatorResponse = await graphqlClient.query({
         query: playerQuery,
         variables: {
-            username: initiator,
-        },
+            username: initiator
+        }
     });
 
     const inviteeResponse = await graphqlClient.query({
         query: playerQuery,
         variables: {
-            username: invitee,
-        },
+            username: invitee
+        }
     });
 
     if (!initiatorResponse.data.getPlayer || !inviteeResponse.data.getPlayer) {
@@ -55,10 +61,7 @@ exports.handler = async (event) => {
         throw new Error("At least 1 player does not exist!");
     }
 
-    if (
-        initiatorResponse.data.getPlayer.id ===
-        inviteeResponse.data.getPlayer.id
-    ) {
+    if (initiatorResponse.data.getPlayer.id === inviteeResponse.data.getPlayer.id) {
         console.log("Initiator cannot invite themself!");
         throw new Error("Initiator cannot invite themself!");
     }
@@ -97,23 +100,15 @@ exports.handler = async (event) => {
             owners: [initiator, invitee],
             initiator: initiator,
             turn: Math.random() < 0.5 ? initiator : invitee,
-            state: [null, null, null, null, null, null, null, null, null],
-        },
+            state: [null, null, null, null, null, null, null, null, null]
+        }
     });
 
     //3. Linking the game with the players (by creating a playerGame Model)
     const playerGameMutation = gql`
-        mutation createPlayerGame(
-            $gameID: ID!
-            $playerUsername: String!
-            $owners: [String!]!
-        ) {
+        mutation createPlayerGame($gameID: ID!, $playerUsername: String!, $owners: [String!]!) {
             createPlayerGame(
-                input: {
-                    gameID: $gameID
-                    playerUsername: $playerUsername
-                    owners: $owners
-                }
+                input: { gameID: $gameID, playerUsername: $playerUsername, owners: $owners }
             ) {
                 id
             }
@@ -125,8 +120,8 @@ exports.handler = async (event) => {
         variables: {
             gameID: gameResponse.data.createGame.id,
             playerUsername: initiator,
-            owners: [initiator, invitee],
-        },
+            owners: [initiator, invitee]
+        }
     });
 
     const inviteePlayerGameResponse = await graphqlClient.mutate({
@@ -134,17 +129,51 @@ exports.handler = async (event) => {
         variables: {
             gameID: gameResponse.data.createGame.id,
             playerUsername: invitee,
-            owners: [initiator, invitee],
-        },
+            owners: [initiator, invitee]
+        }
     });
 
     //4. Send a push notification to the invitee
+    const inviteeTokens = inviteeResponse.data.getPlayer.tokens.items;
+    console.log(inviteeTokens)
+    // const expo = new Expo();
+    // const messages = [];
+    // for (let pushToken of inviteeTokens) {
+    //     if (!Expo.isExpoPushToken(pushToken.token)) {
+    //         continue;
+    //     }
+    //     messages.push({
+    //         to: pushToken.token,
+    //         sound: "default",
+    //         bodu: `${initiator} invited you to play a game!`,
+    //         data: { gameId: gameResponse.data.createGame.id },
+    //         badge: 1
+    //     });
+    // }
+
+    // const chunks = expo.chunkPushNotifications(messages);
+    // const tickets = [];
+    // for (let chunk of chunks) {
+    //     try {
+    //         const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+    //         for (let index = 0; index < ticketChunk.length; index++) {
+    //             const ticket = ticketChunk[index];
+    //             const expoToken = chunk[index].to;
+    //             tickets.push({
+    //                 expoToken,
+    //                 ticket
+    //             });
+    //         }
+    //     } catch (error) {
+    //         //report
+    //     }
+    // }
 
     return {
         id: gameResponse.data.createGame.id,
         status: gameResponse.data.createGame.status,
         turn: gameResponse.data.createGame.turn,
         state: gameResponse.data.createGame.state,
-        winner: gameResponse.data.createGame.winner,
+        winner: gameResponse.data.createGame.winner
     };
 };

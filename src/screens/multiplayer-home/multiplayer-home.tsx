@@ -52,7 +52,7 @@ export default function MultiplayerHome({
                 const player = (await API.graphql(
                     graphqlOperation(getPlayer, {
                         username: user.username,
-                        limit: 2,
+                        limit: 10,
                         nextToken: nextToken,
                         sortDirection: "DESC",
                     })

@@ -14,7 +14,7 @@
   #set( $identityValue = $util.defaultIfNull($ctx.identity.claims.get("username"),
                          $util.defaultIfNull($ctx.identity.claims.get("cognito:username"),
                          "___xamznone___")) )
-  #foreach( $allowedOwner is $allowedOwners0 )
+  #foreach( $allowedOwner in $allowedOwners0 )
     #if( $allowedOwner == $identityValue )
       #set( $isOwnerAuthorized = true)
     #end
